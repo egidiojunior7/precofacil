@@ -1,0 +1,5 @@
+{
+  "name": "Calculadora de Preços para Gráfica",
+  "description": "Um aplicativo para ajudar pequenas gráficas a precificar seus produtos com base em custos fixos, variáveis, mão de obra e margem de lucro.",
+  "requestFramePermissions": []
+}
