@@ -14,7 +14,6 @@ const Auth: React.FC = () => {
     const handleAuth = async (event: React.FormEvent) => {
         event.preventDefault();
         
-        // Correção principal: Garante que o supabase existe antes de usá-lo.
         if (!supabase) {
             setError("Erro de configuração: A conexão com o banco de dados não foi estabelecida.");
             return;
@@ -60,23 +59,23 @@ const Auth: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
-            <div className="w-full max-w-md">
-                 <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center bg-indigo-600 p-3 rounded-full mb-4">
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+            <div className="w-full max-w-sm">
+                 <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center bg-indigo-600 p-3 rounded-lg mb-4">
                       <PriceIcon />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900">Calculadora de Preços</h1>
-                    <p className="mt-2 text-slate-600">Acesse sua conta para começar.</p>
+                    <h1 className="text-3xl font-bold text-slate-900">Precify</h1>
+                    <p className="mt-2 text-slate-600">Acesse sua conta para começar a calcular.</p>
                 </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                    <h2 className="text-2xl font-semibold text-center text-slate-800 mb-6">{isLogin ? 'Login' : 'Cadastro'}</h2>
+                <div className="bg-white p-8 rounded-lg shadow-sm border border-slate-200">
+                    <h2 className="text-xl font-semibold text-center text-slate-800 mb-6">{isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta'}</h2>
                     <form onSubmit={handleAuth} className="space-y-6">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-slate-700">E-mail</label>
                             <input
                                 id="email"
-                                className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                 type="email"
                                 placeholder="seu@email.com"
                                 value={email}
@@ -88,7 +87,7 @@ const Auth: React.FC = () => {
                             <label htmlFor="password"className="block text-sm font-medium text-slate-700">Senha</label>
                             <input
                                 id="password"
-                                className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                 type="password"
                                 placeholder="Sua senha"
                                 value={password}
@@ -100,13 +99,13 @@ const Auth: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+                                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors"
                             >
                                 {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Cadastrar')}
                             </button>
                         </div>
-                        {error && <p className="text-sm text-red-600 text-center bg-red-50 p-3 rounded-md">{error}</p>}
-                        {message && <p className="text-sm text-green-600 text-center bg-green-50 p-3 rounded-md">{message}</p>}
+                        {error && <p className="text-sm text-red-600 text-center bg-red-50 p-3 rounded-md border border-red-200">{error}</p>}
+                        {message && <p className="text-sm text-green-600 text-center bg-green-50 p-3 rounded-md border border-green-200">{message}</p>}
                     </form>
                     <p className="mt-6 text-center text-sm text-slate-500">
                         {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
@@ -116,7 +115,7 @@ const Auth: React.FC = () => {
                                 setError(null);
                                 setMessage(null);
                             }}
-                            className="ml-1 font-semibold text-indigo-600 hover:text-indigo-500"
+                            className="ml-1 font-semibold text-indigo-600 hover:text-indigo-500 hover:underline"
                         >
                             {isLogin ? 'Cadastre-se' : 'Faça login'}
                         </button>

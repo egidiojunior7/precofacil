@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import Auth from './components/Auth';
 import PricingCalculator from './components/PricingCalculator';
+import Layout from './components/Layout';
 import { ConfigurationWarning } from './components/ConfigurationWarning';
 import type { Session } from '@supabase/supabase-js';
 
@@ -37,9 +38,15 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="bg-slate-50 min-h-screen">
-            {!session ? <Auth /> : <PricingCalculator key={session.user.id} session={session} />}
-        </div>
+        <>
+            {!session ? (
+                <Auth />
+            ) : (
+                <Layout session={session}>
+                    <PricingCalculator session={session} />
+                </Layout>
+            )}
+        </>
     );
 };
 
