@@ -10,20 +10,18 @@ const App: React.FC = () => {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // Se o cliente Supabase não estiver configurado, exibe a tela de aviso.
-    // Esta é a correção principal que impede o crash.
+    // Esta verificação é o ponto central de segurança.
+    // Se o cliente Supabase não pôde ser inicializado, a aplicação para aqui.
     if (!supabase) {
         return <ConfigurationWarning />;
     }
 
     useEffect(() => {
-        const getSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
+        // Este efeito só roda se a verificação acima passar, garantindo que 'supabase' não é nulo.
+        supabase.auth.getSession().then(({ data: { session } }) => {
             setSession(session);
             setLoading(false);
-        };
-
-        getSession();
+        });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);

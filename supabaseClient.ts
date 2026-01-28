@@ -10,12 +10,30 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 const supabaseUrl = 'COLOQUE_SUA_URL_AQUI';
 const supabaseAnonKey = 'COLOQUE_SUA_CHAVE_ANON_AQUI';
 
-let supabase: SupabaseClient | null = null;
+/**
+ * Cria e retorna uma instância do cliente Supabase, ou null se não configurado.
+ * Esta abordagem garante que a inicialização seja explícita e segura.
+ */
+const createSupabaseClient = (): SupabaseClient | null => {
+  // Verifica se as credenciais foram realmente alteradas dos valores padrão.
+  const isConfigured = 
+    supabaseUrl && supabaseUrl !== 'COLOQUE_SUA_URL_AQUI' &&
+    supabaseAnonKey && supabaseAnonKey !== 'COLOQUE_SUA_CHAVE_ANON_AQUI';
 
-// Esta verificação garante que a aplicação não quebre se as credenciais
-// não forem inseridas. Em vez disso, a tela principal mostrará um aviso.
-if (supabaseUrl !== 'COLOQUE_SUA_URL_AQUI' && supabaseAnonKey !== 'COLOQUE_SUA_CHAVE_ANON_AQUI') {
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-}
+  if (!isConfigured) {
+    // Se não estiver configurado, a aplicação mostrará um aviso em vez de quebrar.
+    return null;
+  }
 
-export { supabase };
+  try {
+    // Se configurado, cria e retorna o cliente.
+    return createClient(supabaseUrl, supabaseAnonKey);
+  } catch (error) {
+    console.error("Erro ao inicializar o cliente Supabase:", error);
+    // Em caso de erro na criação (ex: URL mal formada), retorna null.
+    return null;
+  }
+};
+
+// Exporta a instância única do cliente, que será ou o cliente funcional ou null.
+export const supabase = createSupabaseClient();
