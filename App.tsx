@@ -28,6 +28,9 @@ const App: React.FC = () => {
         timeSpent: 2,
         desiredProfitMargin: 50,
     });
+    
+    const [manualSellingPrice, setManualSellingPrice] = useState<string>('');
+
 
     const formatCurrency = (value: number) => {
         if (isNaN(value) || !isFinite(value)) return "R$ 0,00";
@@ -66,20 +69,17 @@ const App: React.FC = () => {
         setVariableCosts(costs => costs.filter(cost => cost.id !== id));
     };
 
-
-    const { hourlyLaborRate, totalMonthlyHours } = useMemo(() => {
+    const { hourlyLaborRate } = useMemo(() => {
         const totalHours = laborData.workingDays * laborData.workingHours;
-        if (totalHours === 0) return { hourlyLaborRate: 0, totalMonthlyHours: 0 };
+        if (totalHours === 0) return { hourlyLaborRate: 0 };
         return {
             hourlyLaborRate: laborData.desiredSalary / totalHours,
-            totalMonthlyHours: totalHours,
         };
     }, [laborData]);
 
     const { totalHourlyFixedCost, totalMonthlyFixedCost } = useMemo(() => {
         const monthlyTotal = fixedCosts.reduce((acc, cost) => acc + Number(cost.monthlyCost || 0), 0);
-        // O divisor 720 representa o total de horas em um mês de 30 dias (30 dias * 24 horas).
-        const fixedDivisor = 720;
+        const fixedDivisor = 720; // Horas em um mês (30 dias * 24 horas)
         return {
             totalHourlyFixedCost: monthlyTotal / fixedDivisor,
             totalMonthlyFixedCost: monthlyTotal
@@ -93,22 +93,33 @@ const App: React.FC = () => {
         }, 0);
     }, [variableCosts]);
 
-    const { productLaborCost, productFixedCost, totalBaseCost, profitAmount, finalPrice } = useMemo(() => {
-        const pLaborCost = hourlyLaborRate * productData.timeSpent;
-        const pFixedCost = totalHourlyFixedCost * productData.timeSpent;
+    const { productLaborCost, productFixedCost, totalBaseCost } = useMemo(() => {
+        const pLaborCost = hourlyLaborRate * (productData.timeSpent || 0);
+        const pFixedCost = totalHourlyFixedCost * (productData.timeSpent || 0);
         const baseCost = pLaborCost + pFixedCost + totalVariableCost;
-        const pAmount = baseCost * (productData.desiredProfitMargin / 100);
-        const fPrice = baseCost + pAmount;
+        return { productLaborCost: pLaborCost, productFixedCost: pFixedCost, totalBaseCost: baseCost };
+    }, [hourlyLaborRate, totalHourlyFixedCost, totalVariableCost, productData.timeSpent]);
+    
+    const { suggestedPrice } = useMemo(() => {
+        const profit = totalBaseCost * ((productData.desiredProfitMargin || 0) / 100);
+        const price = totalBaseCost + profit;
+        return { suggestedPrice: price };
+    }, [totalBaseCost, productData.desiredProfitMargin]);
+    
+    const roundedSuggestedPrice = useMemo(() => {
+        if (isNaN(suggestedPrice) || !isFinite(suggestedPrice)) return 0;
+        return Math.ceil(suggestedPrice);
+    }, [suggestedPrice]);
 
+    const { finalProfitAmount, finalProfitMargin } = useMemo(() => {
+        const priceToUse = Number(manualSellingPrice) > 0 ? Number(manualSellingPrice) : suggestedPrice;
+        const profit = priceToUse - totalBaseCost;
+        const margin = totalBaseCost > 0 ? (profit / totalBaseCost) * 100 : 0;
         return {
-            productLaborCost: pLaborCost,
-            productFixedCost: pFixedCost,
-            totalBaseCost: baseCost,
-            profitAmount: pAmount,
-            finalPrice: fPrice,
+            finalProfitAmount: profit,
+            finalProfitMargin: margin,
         };
-    }, [hourlyLaborRate, totalHourlyFixedCost, totalVariableCost, productData]);
-
+    }, [manualSellingPrice, suggestedPrice, totalBaseCost]);
 
     return (
         <div className="bg-slate-50 min-h-screen text-slate-800 p-4 sm:p-6 lg:p-8">
@@ -120,7 +131,6 @@ const App: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     
-                    {/* Column 1: Base Costs */}
                     <div className="lg:col-span-1 space-y-8">
                         <Card title="Passo 1: Mão de Obra" icon={<ClockIcon />}>
                             <NumberInput label="Salário Pretendido (Mês)" value={laborData.desiredSalary} onChange={(v) => handleLaborChange('desiredSalary', v)} prefix="R$" />
@@ -175,7 +185,6 @@ const App: React.FC = () => {
                         </Card>
                     </div>
                     
-                    {/* Column 2: Variable Costs & Product Info */}
                     <div className="lg:col-span-1 space-y-8">
                        <Card title="Passo 3: Custos Variáveis" icon={<ChartBarIcon />}>
                            <div className="space-y-4">
@@ -208,16 +217,33 @@ const App: React.FC = () => {
                        </Card>
                     </div>
 
-                    {/* Column 3: Final Price */}
                      <div className="lg:col-span-1 sticky top-8">
-                        <Card title="Preço Final do Produto" icon={<PriceIcon />} className="bg-indigo-600 text-white shadow-2xl shadow-indigo-200">
-                             <h2 className="text-xl font-bold text-center text-indigo-200 truncate">{productData.name}</h2>
-                             <div className="my-6 text-center">
-                                 <p className="text-lg font-medium text-indigo-200">Preço de Venda Sugerido</p>
-                                 <p className="text-6xl font-extrabold tracking-tight text-white py-2">{formatCurrency(finalPrice)}</p>
-                             </div>
+                        <Card title="Resultado da Precificação" icon={<PriceIcon />} className="bg-indigo-600 text-white shadow-2xl shadow-indigo-200">
+                            <h2 className="text-xl font-bold text-center text-indigo-200 truncate">{productData.name || "Seu Produto"}</h2>
                              
-                             <div className="space-y-3 text-sm border-t border-indigo-500 pt-6">
+                            <div className="my-6 text-center bg-indigo-700/50 p-4 rounded-lg">
+                                <p className="text-sm font-medium text-indigo-200">Preço de Venda Sugerido</p>
+                                <p className="text-4xl font-extrabold tracking-tight text-white py-1">{formatCurrency(suggestedPrice)}</p>
+                                <p className="text-sm text-indigo-300">Sugestão arredondada: {formatCurrency(roundedSuggestedPrice)}</p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="manualPrice" className="block text-sm font-medium text-indigo-200">Seu Preço de Venda (Opcional)</label>
+                                <div className="relative">
+                                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-300">R$</span>
+                                    <input
+                                        id="manualPrice"
+                                        type="number"
+                                        value={manualSellingPrice}
+                                        onChange={(e) => setManualSellingPrice(e.target.value)}
+                                        min={0}
+                                        placeholder={suggestedPrice.toFixed(2)}
+                                        className="w-full bg-indigo-500/50 border border-indigo-400 rounded-md py-2 pl-10 pr-3 text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-white focus:border-white"
+                                    />
+                                </div>
+                            </div>
+
+                             <div className="space-y-3 text-sm border-t border-indigo-500 pt-6 mt-6">
                                 <div className="flex justify-between items-center text-indigo-100">
                                     <span>Custo de Mão de Obra</span>
                                     <span className="font-semibold">{formatCurrency(productLaborCost)}</span>
@@ -234,9 +260,16 @@ const App: React.FC = () => {
                                     <span>Custo Total de Produção</span>
                                     <span>{formatCurrency(totalBaseCost)}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-indigo-100 mt-4">
-                                    <span>Lucro ({productData.desiredProfitMargin}%)</span>
-                                    <span className="font-semibold">{formatCurrency(profitAmount)}</span>
+                                <div className={`p-3 rounded-lg mt-4 ${Number(manualSellingPrice) > 0 ? 'bg-indigo-900' : 'bg-transparent'}`}>
+                                    <div className="flex justify-between items-center text-white font-bold">
+                                        <span>Lucro ({finalProfitMargin.toFixed(1)}%)</span>
+                                        <span>{formatCurrency(finalProfitAmount)}</span>
+                                    </div>
+                                    {Number(manualSellingPrice) > 0 && Number(manualSellingPrice) < suggestedPrice && (
+                                        <p className="text-xs text-yellow-300 mt-1 text-center">
+                                            Atenção: Seu preço está abaixo do sugerido.
+                                        </p>
+                                    )}
                                 </div>
                              </div>
                         </Card>
