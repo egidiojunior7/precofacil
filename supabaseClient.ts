@@ -1,19 +1,21 @@
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 // -----------------------------------------------------------------------------
-// IMPORTANTE: Substitua os valores abaixo pela sua URL e Chave "anon" do Supabase.
-// Você pode encontrar esses valores no painel do seu projeto no Supabase,
-// em "Project Settings" > "API".
+// INSTRUÇÕES IMPORTANTES:
+// 1. Vá para o painel do seu projeto no Supabase.
+// 2. Encontre sua URL e sua chave "anon" em "Project Settings" > "API".
+// 3. Substitua os textos 'COLOQUE_SUA_URL_AQUI' e 'COLOQUE_SUA_CHAVE_ANON_AQUI' abaixo.
 // -----------------------------------------------------------------------------
-const supabaseUrl = 'COLOQUE_SUA_SUPABASE_URL_AQUI';
-const supabaseAnonKey = 'COLOQUE_SUA_SUPABASE_ANON_KEY_AQUI';
+const supabaseUrl = 'COLOQUE_SUA_URL_AQUI';
+const supabaseAnonKey = 'COLOQUE_SUA_CHAVE_ANON_AQUI';
 
+let supabase: SupabaseClient | null = null;
 
-// Verifica se os valores de placeholder foram substituídos.
-// Uma URL válida do Supabase sempre começará com 'http'.
-const isConfigured = supabaseUrl.startsWith('http');
+// Esta verificação garante que a aplicação não quebre se as credenciais
+// não forem inseridas. Em vez disso, a tela principal mostrará um aviso.
+if (supabaseUrl !== 'COLOQUE_SUA_URL_AQUI' && supabaseAnonKey !== 'COLOQUE_SUA_CHAVE_ANON_AQUI') {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+}
 
-// Exporta o cliente Supabase apenas se as credenciais estiverem configuradas.
-// Caso contrário, exporta null para que a UI possa mostrar um aviso na tela.
-export const supabase = isConfigured ? createClient(supabaseUrl, supabaseAnonKey) : null;
+export { supabase };

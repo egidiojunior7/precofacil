@@ -24,6 +24,7 @@ const PricingCalculator: React.FC<PricingCalculatorProps> = ({ session }) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!supabase) return;
             setLoading(true);
             const user = session.user;
             try {
@@ -72,61 +73,72 @@ const PricingCalculator: React.FC<PricingCalculatorProps> = ({ session }) => {
     };
 
     const handleLaborChange = async <T extends keyof LaborData>(field: T, value: LaborData[T]) => {
+        if (!supabase) return;
         const newData = { ...laborData, [field]: value };
         setLaborData(newData);
         await supabase.from('labor_data').update({ [field]: value }).eq('user_id', session.user.id);
     };
     
     const handleProductChange = async <T extends keyof ProductData>(field: T, value: ProductData[T]) => {
+        if (!supabase) return;
         const newData = { ...productData, [field]: value };
         setProductData(newData);
         await supabase.from('product_data').update({ [field]: value }).eq('user_id', session.user.id);
     };
     
     const handleFixedCostChange = async (id: string, field: keyof Omit<FixedCost, 'id'>, value: string | number) => {
+        if (!supabase) return;
         const newCosts = fixedCosts.map(cost => cost.id === id ? { ...cost, [field]: value } : cost);
         setFixedCosts(newCosts);
         await supabase.from('fixed_costs').update({ [field]: value }).eq('id', id);
     };
 
     const handleAddFixedCost = async () => {
+        if (!supabase) return;
         const { data } = await supabase.from('fixed_costs').insert({ name: 'Novo Custo', monthly_cost: 0, user_id: session.user.id }).select().single();
         if (data) setFixedCosts(costs => [...costs, data]);
     };
 
     const handleRemoveFixedCost = async (id: string) => {
+        if (!supabase) return;
         setFixedCosts(costs => costs.filter(cost => cost.id !== id));
         await supabase.from('fixed_costs').delete().eq('id', id);
     };
 
     const handleVariableCostChange = async (id: string, field: keyof Omit<VariableCost, 'id'>, value: string | number) => {
+        if (!supabase) return;
         const newCosts = variableCosts.map(cost => cost.id === id ? { ...cost, [field]: value } : cost);
         setVariableCosts(newCosts);
         await supabase.from('variable_costs').update({ [field]: value }).eq('id', id);
     };
 
     const handleAddVariableCost = async () => {
+        if (!supabase) return;
         const { data } = await supabase.from('variable_costs').insert({ name: 'Novo Material', item_cost: 0, yield: 1, quantity: 0, unit_name: 'unidades', user_id: session.user.id }).select().single();
         if (data) setVariableCosts(costs => [...costs, data]);
     };
 
     const handleRemoveVariableCost = async (id: string) => {
+        if (!supabase) return;
         setVariableCosts(costs => costs.filter(cost => cost.id !== id));
         await supabase.from('variable_costs').delete().eq('id', id);
     };
     
     const handleInkCostChange = async (id: string, field: keyof Omit<InkCost, 'id'>, value: string | number) => {
+        if (!supabase) return;
         const newCosts = inkCosts.map(cost => cost.id === id ? { ...cost, [field]: value } : cost);
         setInkCosts(newCosts);
         await supabase.from('ink_costs').update({ [field]: value }).eq('id', id);
     };
 
     const handleAddInkCost = async () => {
+        if (!supabase) return;
         const { data } = await supabase.from('ink_costs').insert({ name: 'Nova Tinta', cartridge_price: 0, cartridge_yield: 1, user_id: session.user.id }).select().single();
         if (data) setInkCosts(costs => [...costs, data]);
     };
     
     const handleRemoveInkCost = async (id: string) => {
+        if (!supabase) return;
         setInkCosts(costs => costs.filter(cost => cost.id !== id));
         await supabase.from('ink_costs').delete().eq('id', id);
     };
@@ -178,7 +190,7 @@ const PricingCalculator: React.FC<PricingCalculatorProps> = ({ session }) => {
                         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">Calculadora de Preços</h1>
                         <p className="mt-1 text-base sm:text-lg text-slate-600">Olá, {session.user.email}</p>
                     </div>
-                    <button onClick={() => supabase.auth.signOut()} className="px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition-colors">Sair</button>
+                    <button onClick={() => supabase?.auth.signOut()} className="px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition-colors">Sair</button>
                 </header>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                      <div className="lg:col-span-1 space-y-8">

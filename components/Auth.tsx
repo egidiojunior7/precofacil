@@ -13,6 +13,13 @@ const Auth: React.FC = () => {
 
     const handleAuth = async (event: React.FormEvent) => {
         event.preventDefault();
+        
+        // Correção principal: Garante que o supabase existe antes de usá-lo.
+        if (!supabase) {
+            setError("Erro de configuração: A conexão com o banco de dados não foi estabelecida.");
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setMessage(null);

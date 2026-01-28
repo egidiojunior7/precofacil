@@ -3,21 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import Auth from './components/Auth';
 import PricingCalculator from './components/PricingCalculator';
+import { ConfigurationWarning } from './components/ConfigurationWarning';
 import type { Session } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
     const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // Se o cliente Supabase não estiver configurado, evitamos chamadas de API
-        // e a tela de autenticação falhará de forma controlada ao ser usada.
-        if (!supabase) {
-            console.error("Configuração do Supabase não encontrada. Verifique o arquivo supabaseClient.ts");
-            setLoading(false);
-            return;
-        }
+    // Se o cliente Supabase não estiver configurado, exibe a tela de aviso.
+    // Esta é a correção principal que impede o crash.
+    if (!supabase) {
+        return <ConfigurationWarning />;
+    }
 
+    useEffect(() => {
         const getSession = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             setSession(session);
