@@ -27,7 +27,26 @@ const Auth: React.FC = () => {
                 setMessage('Cadastro realizado! Por favor, verifique seu e-mail para confirmar a conta.');
             }
         } catch (error: any) {
-            setError(error.error_description || error.message);
+            let errorMessage = "Ocorreu um erro desconhecido. Tente novamente.";
+            if (error.message) {
+                switch (error.message) {
+                    case 'Invalid login credentials':
+                        errorMessage = 'E-mail ou senha incorretos. Por favor, verifique seus dados.';
+                        break;
+                    case 'User already registered':
+                        errorMessage = 'Este e-mail já está cadastrado. Tente fazer login.';
+                        break;
+                    case 'Invalid API key':
+                        errorMessage = 'Erro de configuração: A chave de API é inválida.';
+                        break;
+                    case 'Password should be at least 6 characters':
+                        errorMessage = 'A senha deve ter no mínimo 6 caracteres.';
+                        break;
+                    default:
+                        errorMessage = error.error_description || error.message;
+                }
+            }
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }

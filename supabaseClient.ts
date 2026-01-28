@@ -1,7 +1,19 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://nbbavwsfesidygmvdqwa.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iYmF2d3NmZXNpZHltbXZkcXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg1NjQ5MzYsImV4cCI6MjAzNDE0MDkzNn0.sb_publishable_xIvawtFgu0ucwLs1Iyyh4w_NsFlTMt8';
+// -----------------------------------------------------------------------------
+// IMPORTANTE: Substitua os valores abaixo pela sua URL e Chave "anon" do Supabase.
+// Você pode encontrar esses valores no painel do seu projeto no Supabase,
+// em "Project Settings" > "API".
+// -----------------------------------------------------------------------------
+const supabaseUrl = 'COLOQUE_SUA_SUPABASE_URL_AQUI';
+const supabaseAnonKey = 'COLOQUE_SUA_SUPABASE_ANON_KEY_AQUI';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Verifica se os valores de placeholder foram substituídos.
+// Uma URL válida do Supabase sempre começará com 'http'.
+const isConfigured = supabaseUrl.startsWith('http');
+
+// Exporta o cliente Supabase apenas se as credenciais estiverem configuradas.
+// Caso contrário, exporta null para que a UI possa mostrar um aviso na tela.
+export const supabase = isConfigured ? createClient(supabaseUrl, supabaseAnonKey) : null;
