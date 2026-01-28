@@ -20,8 +20,16 @@ export interface VariableCost {
     unitName: string; // e.g., 'folhas', 'impressões', 'unidades'
 }
 
+export interface InkCost {
+    id: string;
+    name: string;
+    cartridgePrice: number;
+    cartridgeYield: number;
+}
+
 export interface ProductData {
     name: string;
     timeSpent: number;
+    printQuantity: number;
     desiredProfitMargin: number;
 }
