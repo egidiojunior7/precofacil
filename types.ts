@@ -1,37 +1,27 @@
 
-export interface LaborConfig {
-  salary: number;
-  workDays: number;
-  workHours: number;
+export interface LaborData {
+    desiredSalary: number;
+    workingDays: number;
+    workingHours: number;
 }
 
-export interface CostItem {
-  id: string;
-  name: string;
-  value: number;
+export interface FixedCost {
+    id: string;
+    name: string;
+    monthlyCost: number;
 }
 
-export interface Material {
-  id:string;
-  name: string;
-  packCost: number;
-  itemsPerPack: number;
+export interface VariableCost {
+    id: string;
+    name: string;
+    itemCost: number; // Cost of the pack/kit
+    yield: number;    // How many units in the pack/kit
+    quantity: number; // How many units are used for the product
+    unitName: string; // e.g., 'folhas', 'impressões', 'unidades'
 }
 
-export interface InkConfig {
-  kitCost: number;
-  yield: number;
-}
-
-export interface MaterialUsage {
-  materialId: string;
-  quantity: number;
-}
-
-export interface Product {
-  name: string;
-  timeSpent: number; // in hours
-  materialsUsed: MaterialUsage[];
-  printCount: number;
-  profitMargin: number; // percentage
+export interface ProductData {
+    name: string;
+    timeSpent: number;
+    desiredProfitMargin: number;
 }
