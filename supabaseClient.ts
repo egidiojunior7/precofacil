@@ -6,8 +6,8 @@ import { createClient } from '@supabase/supabase-js';
 // Você pode encontrar esses valores no painel do seu projeto no Supabase,
 // em "Project Settings" > "API".
 // -----------------------------------------------------------------------------
-const supabaseUrl = 'COLOQUE_SUA_SUPABASE_URL_AQUI';
-const supabaseAnonKey = 'COLOQUE_SUA_SUPABASE_ANON_KEY_AQUI';
+const supabaseUrl = 'https://nbbavwsfesidygmvdqwa.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iYmF2d3NmZXNpZHlnbXZkcXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzMyNDAsImV4cCI6MjA4NTAwOTI0MH0.UC4WK_uM_I1z-f2raUgF5lXF7PgSiq1iKDj6GXDdIxU';
 
 
 // Verifica se os valores de placeholder foram substituídos.
