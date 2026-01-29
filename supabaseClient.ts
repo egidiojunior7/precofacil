@@ -7,8 +7,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 // 2. Encontre sua URL e sua chave "anon" em "Project Settings" > "API".
 // 3. Substitua os textos 'COLOQUE_SUA_URL_AQUI' e 'COLOQUE_SUA_CHAVE_ANON_AQUI' abaixo.
 // -----------------------------------------------------------------------------
-const supabaseUrl = 'https://nbbavwsfesidygmvdqwa.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5iYmF2d3NmZXNpZHlnbXZkcXdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzMyNDAsImV4cCI6MjA4NTAwOTI0MH0.UC4WK_uM_I1z-f2raUgF5lXF7PgSiq1iKDj6GXDdIxU';
+const supabaseUrl = 'COLOQUE_SUA_URL_AQUI';
+const supabaseAnonKey = 'COLOQUE_SUA_CHAVE_ANON_AQUI';
 
 /**
  * Cria e retorna uma instância do cliente Supabase, ou null se não configurado.

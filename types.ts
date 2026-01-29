@@ -1,35 +1,45 @@
 
-export interface LaborData {
-    desiredSalary: number;
-    workingDays: number;
-    workingHours: number;
+export interface Profile {
+  id: string;
+  desired_salary: number;
+  monthly_hours: number;
 }
 
 export interface FixedCost {
-    id: string;
-    name: string;
-    monthlyCost: number;
+  id: string;
+  user_id: string;
+  name: string;
+  monthly_cost: number;
 }
 
-export interface VariableCost {
-    id: string;
-    name: string;
-    itemCost: number; // Cost of the pack/kit
-    yield: number;    // How many units in the pack/kit
-    quantity: number; // How many units are used for the product
-    unitName: string; // e.g., 'folhas', 'impressões', 'unidades'
+export interface Material {
+  id: string;
+  user_id: string;
+  name: string;
+  unit_price: number;
+  yield: number; // Quantidade de peças que o material rende
 }
 
-export interface InkCost {
-    id: string;
-    name: string;
-    cartridgePrice: number;
-    cartridgeYield: number;
+export interface Product {
+  id: string;
+  user_id: string;
+  name: string;
+  production_time_minutes: number;
+  profit_margin_percentage: number;
 }
 
-export interface ProductData {
-    name: string;
-    timeSpent: number;
-    printQuantity: number;
-    desiredProfitMargin: number;
+// Tabela de junção para materiais em um produto
+export interface ProductMaterial {
+  id: string;
+  product_id: string;
+  material_id: string;
+  quantity_used: number;
+  materials: Material; // Para facilitar o acesso aos dados do material
+}
+
+export interface OtherProductCost {
+  id: string;
+  product_id: string;
+  name: string;
+  price: number;
 }

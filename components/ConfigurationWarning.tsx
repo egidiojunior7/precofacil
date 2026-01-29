@@ -12,19 +12,18 @@ export const ConfigurationWarning: React.FC = () => {
                 </div>
                 <h1 className="text-2xl font-bold text-slate-900">Configuração Incompleta</h1>
                 <p className="mt-2 text-slate-600">
-                    A aplicação não conseguiu se conectar ao banco de dados porque as credenciais do Supabase não foram configuradas.
+                    A aplicação não se conectou ao banco de dados porque as credenciais do Supabase não foram configuradas.
                 </p>
                 <div className="mt-6 text-left bg-slate-50 p-4 rounded-md border border-slate-200">
                     <h2 className="font-semibold text-slate-800">Ação Necessária:</h2>
-                    <p className="mt-2 text-sm text-slate-700">
-                        1. Abra o arquivo <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">supabaseClient.ts</code> no seu editor de código.
-                    </p>
-                    <p className="mt-2 text-sm text-slate-700">
-                        2. Substitua os valores de <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">supabaseUrl</code> e <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">supabaseAnonKey</code> pelas suas credenciais reais, que você encontra no painel do seu projeto no Supabase em "Project Settings" &gt; "API".
-                    </p>
+                    <ol className="list-decimal list-inside mt-2 text-sm text-slate-700 space-y-2">
+                        <li>Abra o arquivo <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">supabaseClient.ts</code>.</li>
+                        <li>Substitua os valores de <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">supabaseUrl</code> e <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">supabaseAnonKey</code> pelas suas credenciais reais do Supabase.</li>
+                        <li>Execute o script de SQL do arquivo <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded font-mono text-xs">database.sql</code> no SQL Editor do seu projeto Supabase.</li>
+                    </ol>
                 </div>
                  <div className="mt-4 text-sm text-slate-500">
-                    Após salvar a alteração, a página será recarregada automaticamente.
+                    Após salvar a alteração no código, a página será recarregada.
                  </div>
             </div>
         </div>

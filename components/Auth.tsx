@@ -30,20 +30,17 @@ const Auth: React.FC = () => {
             } else {
                 const { error } = await supabase.auth.signUp({ email, password });
                 if (error) throw error;
-                setMessage('Cadastro realizado! Por favor, verifique seu e-mail para confirmar a conta.');
+                setMessage('Cadastro realizado! Verifique seu e-mail para confirmar a conta.');
             }
         } catch (error: any) {
-            let errorMessage = "Ocorreu um erro desconhecido. Tente novamente.";
+            let errorMessage = "Ocorreu um erro. Tente novamente.";
             if (error.message) {
                 switch (error.message) {
                     case 'Invalid login credentials':
-                        errorMessage = 'E-mail ou senha incorretos. Por favor, verifique seus dados.';
+                        errorMessage = 'E-mail ou senha incorretos.';
                         break;
                     case 'User already registered':
                         errorMessage = 'Este e-mail já está cadastrado. Tente fazer login.';
-                        break;
-                    case 'Invalid API key':
-                        errorMessage = 'Erro de configuração: A chave de API é inválida.';
                         break;
                     case 'Password should be at least 6 characters':
                         errorMessage = 'A senha deve ter no mínimo 6 caracteres.';
@@ -65,8 +62,8 @@ const Auth: React.FC = () => {
                     <div className="inline-flex items-center justify-center bg-indigo-600 p-3 rounded-lg mb-4">
                       <PriceIcon />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900">Precify</h1>
-                    <p className="mt-2 text-slate-600">Acesse sua conta para começar a calcular.</p>
+                    <h1 className="text-3xl font-bold text-slate-900" style={{fontFamily: "'Poppins', sans-serif"}}>Precify</h1>
+                    <p className="mt-2 text-slate-600">Acesse para calcular seus preços.</p>
                 </div>
                 <div className="bg-white p-8 rounded-lg shadow-sm border border-slate-200">
                     <h2 className="text-xl font-semibold text-center text-slate-800 mb-6">{isLogin ? 'Bem-vindo de volta!' : 'Crie sua conta'}</h2>
@@ -110,11 +107,7 @@ const Auth: React.FC = () => {
                     <p className="mt-6 text-center text-sm text-slate-500">
                         {isLogin ? 'Não tem uma conta?' : 'Já tem uma conta?'}
                         <button
-                            onClick={() => {
-                                setIsLogin(!isLogin);
-                                setError(null);
-                                setMessage(null);
-                            }}
+                            onClick={() => { setIsLogin(!isLogin); setError(null); setMessage(null); }}
                             className="ml-1 font-semibold text-indigo-600 hover:text-indigo-500 hover:underline"
                         >
                             {isLogin ? 'Cadastre-se' : 'Faça login'}
