@@ -39,6 +39,7 @@ const SettingsPage: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
             console.error("User not found.");
+            alert("Sessão de usuário não encontrada. Por favor, faça login novamente.");
             return;
         }
 
@@ -50,6 +51,7 @@ const SettingsPage: React.FC = () => {
 
         if (error) {
             console.error('Error adding fixed cost:', error);
+            alert('Falha ao adicionar custo fixo. Erro: ' + error.message);
         } else if (data) {
             setFixedCosts([...fixedCosts, data]);
         }

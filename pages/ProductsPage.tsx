@@ -31,6 +31,7 @@ const ProductsPage: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
             console.error("User not found.");
+            alert("Sessão de usuário não encontrada. Por favor, faça login novamente.");
             return;
         }
 
@@ -47,6 +48,7 @@ const ProductsPage: React.FC = () => {
 
         if (error) {
             console.error('Error adding product:', error);
+            alert('Falha ao adicionar produto. Erro: ' + error.message);
         } else if (data) {
             setProducts([...products, data]);
             setSelectedProductId(data.id);

@@ -27,6 +27,7 @@ const MaterialsPage: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {
             console.error("User not found.");
+            alert("Sessão de usuário não encontrada. Por favor, faça login novamente.");
             return;
         }
 
@@ -38,6 +39,7 @@ const MaterialsPage: React.FC = () => {
 
         if (error) {
             console.error('Error adding material:', error);
+            alert('Falha ao adicionar material. Erro: ' + error.message);
         } else if (data) {
             setMaterials([...materials, data]);
         }
