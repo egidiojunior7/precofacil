@@ -36,12 +36,23 @@ const SettingsPage: React.FC = () => {
     };
 
     const handleAddFixedCost = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            console.error("User not found.");
+            return;
+        }
+
         const { data, error } = await supabase
             .from('fixed_costs')
-            .insert({ name: 'Novo Custo Fixo', monthly_cost: 0 })
+            .insert({ name: 'Novo Custo Fixo', monthly_cost: 0, user_id: user.id })
             .select()
             .single();
-        if (data) setFixedCosts([...fixedCosts, data]);
+
+        if (error) {
+            console.error('Error adding fixed cost:', error);
+        } else if (data) {
+            setFixedCosts([...fixedCosts, data]);
+        }
     };
 
     const handleUpdateFixedCost = async (id: string, field: keyof FixedCost, value: any) => {
@@ -57,7 +68,7 @@ const SettingsPage: React.FC = () => {
     if (loading) return <p>Carregando configurações...</p>;
     if (!profile) return <p>Não foi possível carregar o perfil do usuário.</p>;
 
-    const totalMonthlyFixedCost = fixedCosts.reduce((sum, fc) => sum + fc.monthly_cost, 0);
+    const totalMonthlyFixedCost = fixedCosts.reduce((sum, fc) => sum + Number(fc.monthly_cost), 0);
 
     return (
         <div className="space-y-8 max-w-4xl mx-auto">
@@ -108,14 +119,16 @@ const SettingsPage: React.FC = () => {
                             <input
                                 type="text"
                                 value={cost.name}
-                                onChange={(e) => handleUpdateFixedCost(cost.id, 'name', e.target.value)}
+                                onChange={e => setFixedCosts(fcs => fcs.map(fc => fc.id === cost.id ? {...fc, name: e.target.value} : fc))}
+                                onBlur={(e) => handleUpdateFixedCost(cost.id, 'name', e.target.value)}
                                 className="flex-grow border-slate-300 rounded-md shadow-sm text-sm"
                                 placeholder="Nome do custo (ex: Aluguel)"
                             />
                             <input
                                 type="number"
                                 value={cost.monthly_cost}
-                                onChange={(e) => handleUpdateFixedCost(cost.id, 'monthly_cost', Number(e.target.value))}
+                                onChange={e => setFixedCosts(fcs => fcs.map(fc => fc.id === cost.id ? {...fc, monthly_cost: Number(e.target.value)} : fc))}
+                                onBlur={(e) => handleUpdateFixedCost(cost.id, 'monthly_cost', Number(e.target.value))}
                                 className="w-32 text-right border-slate-300 rounded-md shadow-sm text-sm"
                             />
                             <button onClick={() => handleRemoveFixedCost(cost.id)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-100 rounded-full transition-colors">

@@ -11,8 +11,10 @@ const ProductsPage: React.FC = () => {
     const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (!selectedProductId) {
+            fetchProducts();
+        }
+    }, [selectedProductId]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -26,12 +28,19 @@ const ProductsPage: React.FC = () => {
     };
 
     const handleAddNewProduct = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            console.error("User not found.");
+            return;
+        }
+
         const { data, error } = await supabase
             .from('products')
             .insert({
                 name: 'Novo Produto',
                 production_time_minutes: 30,
                 profit_margin_percentage: 100,
+                user_id: user.id,
             })
             .select()
             .single();
@@ -47,7 +56,6 @@ const ProductsPage: React.FC = () => {
     if (selectedProductId) {
         return <ProductDetailPage productId={selectedProductId} onBack={() => {
             setSelectedProductId(null);
-            fetchProducts();
         }} />;
     }
 

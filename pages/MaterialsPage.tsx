@@ -24,9 +24,15 @@ const MaterialsPage: React.FC = () => {
     }, []);
 
     const handleAddMaterial = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            console.error("User not found.");
+            return;
+        }
+
         const { data, error } = await supabase
             .from('materials')
-            .insert({ name: 'Novo Material', unit_price: 0, yield: 1 })
+            .insert({ name: 'Novo Material', unit_price: 0, yield: 1, user_id: user.id })
             .select()
             .single();
 
@@ -38,6 +44,24 @@ const MaterialsPage: React.FC = () => {
     };
 
     const handleRemoveMaterial = async (id: string) => {
+        // Prevent deletion if the material is in use by a product
+        const { data, error: checkError } = await supabase
+            .from('product_materials')
+            .select('id')
+            .eq('material_id', id)
+            .limit(1);
+
+        if (checkError) {
+            console.error('Error checking material usage:', checkError);
+            alert("Não foi possível verificar o uso do material. Tente novamente.");
+            return;
+        }
+
+        if (data && data.length > 0) {
+            alert("Este material não pode ser removido pois está sendo utilizado em um ou mais produtos.");
+            return;
+        }
+
         const { error } = await supabase.from('materials').delete().eq('id', id);
         if (error) {
             console.error('Error removing material:', error);
@@ -94,7 +118,11 @@ const MaterialsPage: React.FC = () => {
                                     <input
                                         type="text"
                                         value={material.name}
-                                        onChange={(e) => handleUpdateMaterial(material.id, 'name', e.target.value)}
+                                        onBlur={(e) => handleUpdateMaterial(material.id, 'name', e.target.value)}
+                                        onChange={(e) => {
+                                            const newMaterials = materials.map(m => m.id === material.id ? {...m, name: e.target.value} : m)
+                                            setMaterials(newMaterials)
+                                        }}
                                         className="w-full bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded px-1 -mx-1"
                                     />
                                 </td>
@@ -103,7 +131,11 @@ const MaterialsPage: React.FC = () => {
                                         type="number"
                                         step="0.01"
                                         value={material.unit_price}
-                                        onChange={(e) => handleUpdateMaterial(material.id, 'unit_price', Number(e.target.value))}
+                                        onBlur={(e) => handleUpdateMaterial(material.id, 'unit_price', Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const newMaterials = materials.map(m => m.id === material.id ? {...m, unit_price: Number(e.target.value)} : m)
+                                            setMaterials(newMaterials)
+                                        }}
                                         className="w-28 text-right bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded px-1"
                                     />
                                 </td>
@@ -113,7 +145,11 @@ const MaterialsPage: React.FC = () => {
                                         step="1"
                                         min="1"
                                         value={material.yield}
-                                        onChange={(e) => handleUpdateMaterial(material.id, 'yield', Number(e.target.value))}
+                                        onBlur={(e) => handleUpdateMaterial(material.id, 'yield', Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const newMaterials = materials.map(m => m.id === material.id ? {...m, yield: Number(e.target.value)} : m)
+                                            setMaterials(newMaterials)
+                                        }}
                                         className="w-24 text-right bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded px-1"
                                     />
                                 </td>

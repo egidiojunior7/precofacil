@@ -1,13 +1,29 @@
 -- -----------------------------------------------------------------------------
--- SCRIPT DE CONFIGURAÇÃO DO BANCO DE DADOS (V3) - PRECIFY MULTIUSUÁRIO
+-- SCRIPT DE CONFIGURAÇÃO DO BANCO DE DADOS (V4) - PRECIFY MULTIUSUÁRIO
 -- -----------------------------------------------------------------------------
 -- Instruções:
--- 1. APAGUE AS TABELAS ANTIGAS NO "Table Editor" DO SUPABASE ANTES DE EXECUTAR.
--- 2. Vá para o seu projeto no Supabase > "SQL Editor".
--- 3. Clique em "+ New query".
--- 4. Copie TODO o conteúdo deste arquivo e cole no editor.
--- 5. Clique em "RUN".
+-- 1. Vá para o seu projeto no Supabase > "SQL Editor".
+-- 2. Clique em "+ New query".
+-- 3. Copie TODO o conteúdo deste arquivo e cole no editor.
+-- 4. Clique em "RUN".
+-- O script foi atualizado para apagar automaticamente tabelas antigas antes de recriá-las.
 -- -----------------------------------------------------------------------------
+
+-- ETAPA 1: Remover a estrutura antiga para garantir uma instalação limpa.
+-- Remove o trigger do hook de autenticação, se existir.
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+-- Remove a função que cria o perfil, se existir.
+DROP FUNCTION IF EXISTS public.handle_new_user();
+-- Remove as tabelas na ordem de dependência (de filho para pai).
+DROP TABLE IF EXISTS public.other_product_costs;
+DROP TABLE IF EXISTS public.product_materials;
+DROP TABLE IF EXISTS public.products;
+DROP TABLE IF EXISTS public.materials;
+DROP TABLE IF EXISTS public.fixed_costs;
+DROP TABLE IF EXISTS public.profiles;
+
+
+-- ETAPA 2: Recriar a estrutura do banco de dados.
 
 -- Tabela de Perfil do Usuário: Armazena configurações globais como salário.
 CREATE TABLE public.profiles (
